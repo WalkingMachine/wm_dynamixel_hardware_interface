@@ -17,11 +17,13 @@ namespace wm_dynamixel_hardware_interface {
 		using namespace hardware_interface;
 		
 		// Get parameters
-	//	if (!robot_hw_nh.getParam("id", ID)) { return false; }
-	//	if (!robot_hw_nh.getParam("offset", Offset)) { return false; }
         std::vector<std::string> Joints;
-		if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
-		Name = Joints[0];
+        robot_hw_nh.getParam("address", Address);
+        robot_hw_nh.getParam("baudrate", Baud);
+        if (!robot_hw_nh.getParam("id", ID)) { return false; }
+        robot_hw_nh.getParam("offset", Offset);
+        if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
+        Name = Joints[0];
 		
 
 		// Initialise interface variables
@@ -35,17 +37,31 @@ namespace wm_dynamixel_hardware_interface {
 		joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
 		registerInterface(&joint_state_interface_);
 		registerInterface(&joint_velocity_interface_);
-		
+
+		// advertise publisher
+		CtrlPub = robot_hw_nh.advertise<std_msgs::Float64MultiArray>( "dynamixel_cmd", 1 );
+		//GripperStatSub.
+		StatSub = robot_hw_nh.subscribe( "dynamixel_pos", 1, &WMDynamixelHardwareInterface::StatusCB, this);
+
+
 		return true;
 	}
 	
 	void WMDynamixelHardwareInterface::read(const ros::Time &time, const ros::Duration &period) {
-
 	}
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
-
+        std_msgs::Float64MultiArray msg;
+        msg.data.push_back( ID );
+        msg.data.push_back( cmd );
 	}
+
+	void WMDynamixelHardwareInterface::StatusCB( std_msgs::Float64MultiArrayConstPtr msg ){
+		if ( ID == (int)msg->data[0] ){
+			pos = msg->data[1];
+		}
+	}
+
 
 }
 PLUGINLIB_EXPORT_CLASS(wm_dynamixel_hardware_interface::WMDynamixelHardwareInterface, hardware_interface::RobotHW)
