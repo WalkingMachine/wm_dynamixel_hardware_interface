@@ -37,11 +37,13 @@ namespace wm_dynamixel_hardware_interface
         static hardware_interface::JointStateInterface joint_state_interface_;
         //std::string port;
         ros::Publisher CtrlPub;
+        ros::Publisher InitPub;
         ros::Subscriber StatSub;
         std::string Address;
         int Baud;
         int ID;
         double Offset;
+        double coef;
 
     };
 }

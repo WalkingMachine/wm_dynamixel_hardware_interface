@@ -25,6 +25,7 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("baudrate", Baud);
         if (!robot_hw_nh.getParam("id", ID)) { return false; }
         robot_hw_nh.getParam("offset", Offset);
+        robot_hw_nh.getParam("coef", coef);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
         Name = Joints[0];
 		
@@ -43,10 +44,15 @@ namespace wm_dynamixel_hardware_interface {
 
 		// advertise publisher
 		CtrlPub = robot_hw_nh.advertise<std_msgs::Float64MultiArray>( "dynamixel_cmd", 1 );
+        InitPub = robot_hw_nh.advertise<std_msgs::Float64MultiArray>( "dynamixel_init", 1 );
 		//GripperStatSub.
 		StatSub = robot_hw_nh.subscribe( "dynamixel_pos", 1, &WMDynamixelHardwareInterface::StatusCB, this);
 
-
+        std_msgs::Float64MultiArray msg;
+        msg.data.push_back( ID );
+        msg.data.push_back( Offset );
+        msg.data.push_back( coef );
+        InitPub.publish( msg );
 		return true;
 	}
 	
