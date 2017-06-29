@@ -10,7 +10,7 @@
 #include <hardware_interface/robot_hw.h>
 #include <string>
 #include <ros/ros.h>
-//#include <std_msgs/Float64MultiArray.h>
+#include <std_msgs/Float64MultiArray.h>
 #include <pluginlib/class_list_macros.h>
 
 namespace wm_dynamixel_hardware_interface
@@ -29,18 +29,19 @@ namespace wm_dynamixel_hardware_interface
         double pos;
         double vel;
         double eff;
-     // void StatusCB( robotiq_c_model_control::CModel_robot_inputConstPtr );
+        void StatusCB( std_msgs::Float64MultiArrayConstPtr msg );
 
-    private:
+    //private:
         // Variables
-        ros::NodeHandle nh;
         static hardware_interface::VelocityJointInterface joint_velocity_interface_;
         static hardware_interface::JointStateInterface joint_state_interface_;
         //std::string port;
-        //ros::Publisher CtrlPub;
-        //ros::Subscriber StatSub;
-        std::string ID;
-        std::string Offset;
+        ros::Publisher CtrlPub;
+        ros::Subscriber StatSub;
+        std::string Address;
+        int Baud;
+        int ID;
+        double Offset;
 
     };
 }
