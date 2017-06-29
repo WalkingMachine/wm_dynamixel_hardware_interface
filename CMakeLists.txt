@@ -37,7 +37,6 @@ include_directories(
 
 
 add_library(${PROJECT_NAME}
-        include/WMDynamixelHardwareInterface.h
         src/WMDynamixelHardwareInterface.cpp
         )
 
@@ -46,7 +45,7 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 
 # Install
-install(DIRECTORY include/
+install(DIRECTORY include/${PROJECT_NAME}/
         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 install(TARGETS ${PROJECT_NAME}
