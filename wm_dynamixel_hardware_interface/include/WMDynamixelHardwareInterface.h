@@ -31,7 +31,7 @@ namespace wm_dynamixel_hardware_interface
         double eff;
         void StatusCB( std_msgs::Float64MultiArrayConstPtr msg );
 
-    //private:
+    private:
         // Variables
         static hardware_interface::VelocityJointInterface joint_velocity_interface_;
         static hardware_interface::JointStateInterface joint_state_interface_;

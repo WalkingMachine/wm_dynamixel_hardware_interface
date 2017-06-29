@@ -17,6 +17,9 @@ namespace wm_dynamixel_hardware_interface {
 		using namespace hardware_interface;
 		
 		// Get parameters
+        Address = "";
+        Baud = 0;
+        Offset = 0;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
