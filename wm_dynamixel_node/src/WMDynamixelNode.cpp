@@ -19,13 +19,13 @@ int main(int argc, char **argv){
 	ros::NodeHandle dynamixelHandler;
 	
 	//initialise ros subscriber
-	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 1, &WriteAcceleration);
+	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, &WriteAcceleration);
 	
 	//initialise ros subscriber
-	ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 1, &addDynamixel);
+	ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10, &addDynamixel);
 	
 	//initialise ros publisher for data feedback
-	dynamixelPublisher = dynamixelHandler.advertise<std_msgs::Float64MultiArray>("dynamixel_pos", 1);
+	dynamixelPublisher = dynamixelHandler.advertise<std_msgs::Float64MultiArray>("dynamixel_pos", 10);
 	
 	//initialise port
 	if(!InitPort(PORTNAME, BAUDRATE)){
@@ -46,6 +46,7 @@ void nodeLoop() {
 	int iCount = 0;
 	ROS_INFO("Going in node loop.");
 	while(ros::ok()){
+		ROS_INFO("Looping");
 		ros::spinOnce();
         ReadFeedback();
 		iCount ++;

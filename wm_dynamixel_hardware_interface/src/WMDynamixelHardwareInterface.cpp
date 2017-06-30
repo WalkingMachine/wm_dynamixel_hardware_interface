@@ -43,10 +43,10 @@ namespace wm_dynamixel_hardware_interface {
 		registerInterface(&joint_velocity_interface_);
 
 		// advertise publisher
-		CtrlPub = robot_hw_nh.advertise<std_msgs::Float64MultiArray>( "dynamixel_cmd", 1 );
-        InitPub = robot_hw_nh.advertise<std_msgs::Float64MultiArray>( "dynamixel_init", 1 );
+        CtrlPub = root_nh.advertise<std_msgs::Float64MultiArray>("dynamixel_cmd", 10);
+        InitPub = root_nh.advertise<std_msgs::Float64MultiArray>("dynamixel_init", 10);
 		//GripperStatSub.
-		StatSub = robot_hw_nh.subscribe( "dynamixel_pos", 1, &WMDynamixelHardwareInterface::StatusCB, this);
+        StatSub = root_nh.subscribe("dynamixel_pos", 10, &WMDynamixelHardwareInterface::StatusCB, this);
 
         std_msgs::Float64MultiArray msg;
         msg.data.push_back( ID );
