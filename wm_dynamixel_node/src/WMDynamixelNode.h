@@ -25,6 +25,7 @@ void ReadFeedback();
 bool write1BDynamixel(int ID, int iAddress, int iValue);
 bool write2BDynamixel(int ID, int iAddress, int iValue);
 int read1BDynamixel(int ID, int iAddress);
-int read2BDynamixel(int ID, int iAddress);
+
+int read2BDynamixel(int ID, int iAddress, bool *returnError);
 
 #endif //PROJECT_WMDynamixelNode_H

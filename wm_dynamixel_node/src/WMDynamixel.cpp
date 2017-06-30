@@ -3,7 +3,6 @@
 //
 
 #include "WMDynamixel.h"
-
 WMDynamixel::WMDynamixel(int Id, double offset, int resolution) {
 	updateDynamixel(Id,offset,resolution);
 }
@@ -13,9 +12,10 @@ void WMDynamixel::initDynamixel() {
 	int goal = (int)(_offset/_coeficient);
 	ROS_INFO("//set TORQUE to ON");
 	write1BDynamixel(_ID, ADDR_P1_TORQUE_ENABLE,1);
-	
-	// -> FOR INITIAL POSITIONING <-
-//	usleep(100000);
+    usleep(DELAY);
+
+    /* -> FOR INITIAL POSITIONING <- */
+//
 //
 //	ROS_INFO("//set NORMAL mode");
 //
@@ -39,15 +39,17 @@ void WMDynamixel::initDynamixel() {
 //	}
 //	while(pos > goal+2 || pos < goal-2);
 
-	
-	usleep(100000);
+
+    //set speed to 0
+    write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 0);
+    usleep(DELAY);
 
 	ROS_INFO("//set WHEEL mode");
 	
 	write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES,0);
 	write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES,0);
-	
-	usleep(100000);
+
+    usleep(DELAY);
 }
 
 void WMDynamixel::setVelocity(double newVelocity) {
@@ -64,20 +66,42 @@ void WMDynamixel::setVelocity(double newVelocity) {
 	}
 }
 
-void WMDynamixel::publishPosition(ros::Publisher pub) {
+bool WMDynamixel::publishPosition(ros::Publisher pub) {
 	if(_isEnable){
+        bool dxl_error = false;
 		//read datas
 		std_msgs::Float64MultiArray msg;
 		
 		//add coef
 		msg.data.push_back((double)_ID);
-		msg.data.push_back(_coeficient * read2BDynamixel(_ID ,ADDR_P1_PRESENT_POSITION_2BYTES));
-		msg.data.push_back(_coeficient * read2BDynamixel(_ID ,ADDR_P1_PRESENT_SPEED_2BYTES));
-		msg.data.push_back(_coeficient * read2BDynamixel(_ID ,ADDR_P1_PRESENT_LOAD_2BYTES));
-		
+        usleep(DELAY);
+        msg.data.push_back(_coeficient * read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error));
+        if (dxl_error) {
+            ROS_INFO("Error reading position");
+            return false;
+        }
+        usleep(DELAY);
+        int iSpeed = read2BDynamixel(_ID, ADDR_P1_PRESENT_SPEED_2BYTES, &dxl_error);
+        if (dxl_error) {
+            ROS_INFO("Error reading speed");
+            return false;
+        }
+        usleep(DELAY);
+        if (iSpeed >= 1024) {
+            iSpeed = -iSpeed + 1024;
+        }
+        msg.data.push_back((double) iSpeed / 325.631013566);
+        msg.data.push_back(read2BDynamixel(_ID, ADDR_P1_PRESENT_LOAD_2BYTES, &dxl_error));
+        if (dxl_error) {
+            ROS_INFO("Error reading load");
+            return false;
+        }
+        usleep(DELAY);
+
 		//publish values
 		pub.publish(msg);
 	}
+    return true;
 }
 
 int WMDynamixel::getID(){

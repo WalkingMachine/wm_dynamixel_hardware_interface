@@ -8,13 +8,15 @@
 #include "WMDynamixelNode.h"
 
 #define PI 3.1415926535897932
+#define DELAY 10000
 
 class WMDynamixel {
 public:
 	WMDynamixel(int Id, double offset, int resolution);
 	void updateDynamixel(int Id, double offset, int resolution);
 	void setVelocity(double newVelocity);
-	void publishPosition(ros::Publisher pub);
+
+    bool publishPosition(ros::Publisher pub);
 	int getID();
 	
 private:

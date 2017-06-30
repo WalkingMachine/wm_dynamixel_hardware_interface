@@ -47,7 +47,7 @@ void nodeLoop() {
 	ROS_INFO("Going in node loop.");
 	while(ros::ok()){
 		ros::spinOnce();
-		//ReadFeedback();
+        ReadFeedback();
 		iCount ++;
 		loop_rate.sleep();
 	}
@@ -167,19 +167,21 @@ int read1BDynamixel(int ID, int iAddress) {
 	return dxl_present_position;
 }
 
-int read2BDynamixel(int ID, int iAddress) {
+int read2BDynamixel(int ID, int iAddress, bool *returnError) {
 	int dxl_comm_result;
-	uint8_t dxl_error = 0;
-	
-	uint16_t dxl_present_position;
+    uint16_t returnValue;
+    uint8_t dxl_error = 0;
+    *returnError = false;
 	// Read present position
-	dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, ID, iAddress, &dxl_present_position, &dxl_error);
-	if (dxl_comm_result != COMM_SUCCESS) {
+    dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, ID, iAddress, &returnValue, &dxl_error);
+    if (dxl_comm_result != COMM_SUCCESS) {
 		packetHandler->printTxRxResult(dxl_comm_result);
+        *returnError = true;
 		return false;
 	} else if (dxl_error != 0) {
 		packetHandler->printRxPacketError(dxl_error);
+        *returnError = true;
 		return false;
 	}
-	return dxl_present_position;
+    return returnValue;
 }
