@@ -43,7 +43,7 @@ namespace wm_dynamixel_hardware_interface
         int Baud;
         int ID;
         double Offset;
-        double coef;
+        double resolution;
 
     };
 }

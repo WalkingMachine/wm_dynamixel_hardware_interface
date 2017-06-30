@@ -25,7 +25,7 @@ namespace wm_dynamixel_hardware_interface {
         robot_hw_nh.getParam("baudrate", Baud);
         if (!robot_hw_nh.getParam("id", ID)) { return false; }
         robot_hw_nh.getParam("offset", Offset);
-        robot_hw_nh.getParam("coef", coef);
+        robot_hw_nh.getParam("resolution", resolution);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
         Name = Joints[0];
 		
@@ -51,7 +51,7 @@ namespace wm_dynamixel_hardware_interface {
         std_msgs::Float64MultiArray msg;
         msg.data.push_back( ID );
         msg.data.push_back( Offset );
-        msg.data.push_back( coef );
+        msg.data.push_back( resolution );
         InitPub.publish( msg );
 		return true;
 	}
@@ -68,6 +68,8 @@ namespace wm_dynamixel_hardware_interface {
 	void WMDynamixelHardwareInterface::StatusCB( std_msgs::Float64MultiArrayConstPtr msg ){
 		if ( ID == (int)msg->data[0] ){
 			pos = msg->data[1];
+			vel = msg->data[2];
+			eff = msg->data[3];
 		}
 	}
 
