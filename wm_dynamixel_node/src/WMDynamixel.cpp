@@ -53,16 +53,19 @@ void WMDynamixel::initDynamixel() {
 }
 
 void WMDynamixel::setVelocity(double newVelocity) {
-    ROS_INFO("receive new velocity");
+    //ROS_INFO("receive new velocity");
     if (_isEnable) {
-        ROS_INFO("read new velocity");
+        //ROS_INFO("read new velocity");
         int iVelocity = (int) (newVelocity * 325.631013566);
 
         if (iVelocity < 0) {
             iVelocity = 1023 - iVelocity;
         }
         write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity);
-        _watchdog = time(0);
+        time_t timer;
+        time( &timer );
+        _watchdog = (unsigned long)timer*1000;  //time in ms
+
     }
 }
 
@@ -72,34 +75,36 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
         watchdogMgr();
 
         bool dxl_error = false;
-        //read datas
+
+        //creat message
         std_msgs::Float64MultiArray msg;
 
-        //add coef
         msg.data.push_back((double) _ID);
+
         usleep(DELAY);
         msg.data.push_back(_coefficient * read2BDynamixel(_ID, ADDR_P1_PRESENT_POSITION_2BYTES, &dxl_error));
+
         if (dxl_error) {
-            ROS_INFO("Error reading position");
+            ROS_ERROR("Error reading position");
             return false;
         }
-        usleep(DELAY);
-        int iSpeed = read2BDynamixel(_ID, ADDR_P1_PRESENT_SPEED_2BYTES, &dxl_error);
-        if (dxl_error) {
-            ROS_INFO("Error reading speed");
-            return false;
-        }
-        usleep(DELAY);
-        if (iSpeed >= 1024) {
-            iSpeed = -iSpeed + 1024;
-        }
-        msg.data.push_back((double) iSpeed / 325.631013566);
-        msg.data.push_back(read2BDynamixel(_ID, ADDR_P1_PRESENT_LOAD_2BYTES, &dxl_error));
-        if (dxl_error) {
-            ROS_INFO("Error reading load");
-            return false;
-        }
-        usleep(DELAY);
+//        usleep(DELAY);
+//        int iSpeed = read2BDynamixel(_ID, ADDR_P1_PRESENT_SPEED_2BYTES, &dxl_error);
+//        if (dxl_error) {
+//            ROS_ERROR("Error reading speed");
+//            return false;
+//        }
+//        usleep(DELAY);
+//        if (iSpeed >= 1024) {
+//            iSpeed = -iSpeed + 1024;
+//        }
+//        msg.data.push_back((double) iSpeed / 325.631013566);
+//        msg.data.push_back(read2BDynamixel(_ID, ADDR_P1_PRESENT_LOAD_2BYTES, &dxl_error));
+//        if (dxl_error) {
+//            ROS_ERROR("Error reading load");
+//            return false;
+//        }
+//        usleep(DELAY);
 
         //publish values
         pub.publish(msg);
@@ -116,15 +121,18 @@ void WMDynamixel::updateDynamixel(int Id, double offset, int resolution) {
     _isEnable = false;
     _offset = offset;
     _coefficient = (2 * PI) / resolution;
-    ROS_INFO("Dynamixel added with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
+    //ROS_INFO("Dynamixel added with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
     initDynamixel();
     _isEnable = true;
-    ROS_INFO("Initialised a dynamixel with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
+    //ROS_INFO("Initialised a dynamixel with ID %i, offset %f and coef %f.", _ID, _offset, _coefficient);
 }
 
 bool WMDynamixel::watchdogMgr() {
-    long double sysTime = time(0);
+    time_t timer;
+    time( &timer );
+    unsigned long sysTime = (unsigned long)timer*1000;  //time in ms
     if (sysTime - WATCHDOG > _watchdog) {
+        ROS_WARN("watchdog!");
         setVelocity(0);
         return true;
     }
