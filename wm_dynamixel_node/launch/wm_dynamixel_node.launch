@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+
+<launch>
+	<node name="wm_dynamixel_node" pkg="wm_dynamixel_node" type="wm_dynamixel_node"/>
+</launch>
