@@ -14,13 +14,39 @@
 
 class WMDynamixel {
 public:
+    /**
+     * Generate a new dynamixel with entered parameters
+     * @param Id
+     * @param offset
+     * @param resolution
+     */
 	WMDynamixel(int Id, double offset, int resolution);
+    /**
+     *  Update dynamixel parameters
+     * @param Id
+     * @param offset
+     * @param resolution
+     */
 	void updateDynamixel(int Id, double offset, int resolution);
+
+    /**
+     * Send a new velocity to the dynamixel (in Rad)
+     * @param newVelocity
+     */
 	void setVelocity(double newVelocity);
 
-    bool watchdogMgr();
+    /**
+     * Publish new dynamixel's position, velocity and load in a topic
+     * @param pub
+     * @return true if OK
+     */
     bool publishPosition(ros::Publisher pub);
-	int getID();
+
+    /**
+     *
+     * @return getter for ID
+     */
+    int getID();
 	
 private:
 	//id of material dynamixel
@@ -38,7 +64,11 @@ private:
     //last write time
     long double _watchdog;
 
+    //initialise dynamixel speed to 0 and toggle torque
 	void initDynamixel();
+
+    //test if watchdog is
+    bool watchdogMgr();
 };
 
 #endif //PROJECT_WMDYNAMIXEL_H
