@@ -13,8 +13,10 @@
 
 #include "dynamixel_sdk.h"
 
+#define NBR_OF_TRY 10
 #define PORTNAME "/dev/ttyUSB0"
 #define BAUDRATE 57600
+
 
 /**
  * reading Loop for physical feedback
