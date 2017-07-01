@@ -36,12 +36,13 @@ namespace wm_dynamixel_hardware_interface
         static hardware_interface::VelocityJointInterface joint_velocity_interface_;
         static hardware_interface::JointStateInterface joint_state_interface_;
         //std::string port;
+        ros::NodeHandle nh;
         ros::Publisher CtrlPub;
         ros::Publisher InitPub;
         ros::Subscriber StatSub;
         std::string Address;
         int Baud;
-        int ID;
+        int Id;
         double Offset;
         double resolution;
 

@@ -20,10 +20,12 @@ namespace wm_dynamixel_hardware_interface {
         Address = "";
         Baud = 0;
         Offset = 0;
+		Id = 0;
+        resolution = 4096;
         std::vector<std::string> Joints;
         robot_hw_nh.getParam("address", Address);
         robot_hw_nh.getParam("baudrate", Baud);
-        if (!robot_hw_nh.getParam("id", ID)) { return false; }
+        if (!robot_hw_nh.getParam("id", Id)) { return false; }
         robot_hw_nh.getParam("offset", Offset);
         robot_hw_nh.getParam("resolution", resolution);
         if (!robot_hw_nh.getParam("joints", Joints)) { return false; }
@@ -35,7 +37,7 @@ namespace wm_dynamixel_hardware_interface {
 		pos = 0;    //position
 		vel = 0;    //velocity
 		eff = 0;    //effort
-		
+
 		// Register interfaces
 		joint_state_interface_.registerHandle(JointStateHandle(Name, &pos, &vel, &eff));
 		joint_velocity_interface_.registerHandle(JointHandle(joint_state_interface_.getHandle(Name), &cmd));
@@ -43,16 +45,29 @@ namespace wm_dynamixel_hardware_interface {
 		registerInterface(&joint_velocity_interface_);
 
 		// advertise publisher
-        CtrlPub = root_nh.advertise<std_msgs::Float64MultiArray>("dynamixel_cmd", 10);
-        InitPub = root_nh.advertise<std_msgs::Float64MultiArray>("dynamixel_init", 10);
+        CtrlPub = nh.advertise<std_msgs::Float64MultiArray>("dynamixel_cmd", 10);
+        InitPub = nh.advertise<std_msgs::Float64MultiArray>("dynamixel_init", 10);
 		//GripperStatSub.
-        StatSub = root_nh.subscribe("dynamixel_pos", 10, &WMDynamixelHardwareInterface::StatusCB, this);
+        StatSub = nh.subscribe("dynamixel_pos", 10, &WMDynamixelHardwareInterface::StatusCB, this);
 
+        // Wait wor the universe to get ready for our greatness!
+        sleep(2);
+        ROS_INFO( "Dynamixel initialising" );
         std_msgs::Float64MultiArray msg;
-        msg.data.push_back( ID );
-        msg.data.push_back( Offset );
-        msg.data.push_back( resolution );
+        std::vector<double> vec = {
+                double(Id),
+                Offset,
+                resolution
+        };
+        msg.layout.dim.push_back( std_msgs::MultiArrayDimension() );
+        msg.layout.dim[0].size = (uint)vec.size();
+        msg.layout.dim[0].stride = 1;
+        msg.layout.dim[0].label = "";
+
+        //msg.layout = std_msgs::MultiArrayLayout();
+        msg.data.insert( msg.data.end(), vec.begin(), vec.end() );
         InitPub.publish( msg );
+        ROS_INFO( "Dynamixel initialised" );
 		return true;
 	}
 	
@@ -61,12 +76,13 @@ namespace wm_dynamixel_hardware_interface {
 	
 	void WMDynamixelHardwareInterface::write(const ros::Time &time, const ros::Duration &period) {
         std_msgs::Float64MultiArray msg;
-        msg.data.push_back( ID );
+        msg.data.push_back( double(Id) );
         msg.data.push_back( cmd );
+        CtrlPub.publish( msg );
 	}
 
 	void WMDynamixelHardwareInterface::StatusCB( std_msgs::Float64MultiArrayConstPtr msg ){
-		if ( ID == (int)msg->data[0] ){
+		if ( Id == (int)msg->data[0] ){
 			pos = msg->data[1];
 			vel = msg->data[2];
 			eff = msg->data[3];
