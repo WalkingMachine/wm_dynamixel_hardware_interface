@@ -50,22 +50,23 @@ void WMDynamixel::initDynamixel() {
 	usleep(DELAY);
 }
 
-void WMDynamixel::setVelocity(double newVelocity) {
-	if (_isEnable) {
-		//read and calculate new velocity
-		int iVelocity = (int) (newVelocity * 325.631013566);
-		if (iVelocity < 0) {
-			iVelocity = 1023 - iVelocity;
-		}
-
-		//write velocity in dynamixel
-		write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity);
-
-		//write watchdog
-		time_t timer;
-		time(&timer);
-		_watchdog = (unsigned long) timer * 1000;  //time in ms
+bool WMDynamixel::setVelocity(double newVelocity) {
+	//read and calculate new velocity
+	int iVelocity = (int) (newVelocity * 325.631013566);
+	if (iVelocity < 0) {
+		iVelocity = 1023 - iVelocity;
 	}
+
+	//write velocity in dynamixel
+	if (!write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, iVelocity)) {
+		return false;
+	}
+
+	//write watchdog
+	time_t timer;
+	time(&timer);
+	_watchdog = (unsigned long) timer * 1000;  //time in ms
+	return true;
 }
 
 bool WMDynamixel::publishPosition(ros::Publisher pub) {
@@ -139,7 +140,9 @@ bool WMDynamixel::watchdogMgr() {
 	if (sysTime - WATCHDOG > _watchdog) {
 		ROS_WARN("watchdog on dynamixel %i!", _ID);
 		//set dynamixel speed to 0;
-		setVelocity(0);
+		while (!setVelocity(0)) {
+			usleep(1000);
+		}
 		return true;
 	}
 	return false;

@@ -29,11 +29,12 @@ public:
      */
 	void updateDynamixel(int Id, double offset, int resolution);
 
-    /**
-     * Send a new velocity to the dynamixel (in Rad)
-     * @param newVelocity
-     */
-	void setVelocity(double newVelocity);
+	/**
+	 * Send a new velocity to the dynamixel (in Rad)
+	 * @param newVelocity
+	 * @return true if OK
+	 */
+	bool setVelocity(double newVelocity);
 
     /**
      * Publish new dynamixel's position, velocity and load in a topic
