@@ -676,7 +676,7 @@ int Protocol1PacketHandler::syncWriteTxOnly(PortHandler *port, uint16_t start_ad
 
   for (uint8_t s = 0; s < param_length; s++)
     txpacket[PKT_PARAMETER0+2+s] = param[s];
-  //memcpy(&txpacket[PKT_PARAMETER0+2], param, param_length);
+	//memcpy(&txpacket[PKT_PARAMETER0+2], rosparam, param_length);
 
   result = txRxPacket(port, txpacket, 0, 0);
 
@@ -700,7 +700,7 @@ int Protocol1PacketHandler::bulkReadTx(PortHandler *port, uint8_t *param, uint16
 
   for (uint8_t s = 0; s < param_length; s++)
     txpacket[PKT_PARAMETER0+1+s] = param[s];
-  //memcpy(&txpacket[PKT_PARAMETER0+1], param, param_length);
+	//memcpy(&txpacket[PKT_PARAMETER0+1], rosparam, param_length);
 
   result = txPacket(port, txpacket);
   if (result == COMM_SUCCESS)

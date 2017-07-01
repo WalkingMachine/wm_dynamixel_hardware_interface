@@ -42,7 +42,7 @@ void WMDynamixel::initDynamixel() {
 	write2BDynamixel(_ID, ADDR_P1_MOVING_SPEED_2BYTES, 0);
 	usleep(DELAY);
 
-	ROS_INFO("//set WHEEL mode");
+	ROS_INFO("Set WHEEL mode.");
 
 	write2BDynamixel(_ID, ADDR_P1_CW_LIMIT_2BYTES, 0);
 	write2BDynamixel(_ID, ADDR_P1_CCW_LIMIT_2BYTES, 0);

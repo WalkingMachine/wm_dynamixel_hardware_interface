@@ -15,11 +15,19 @@ std::vector<WMDynamixel> dynamixelArray;
 
 int main(int argc, char **argv){
 	ros::init(argc, argv, "wm_dynamixel_node");
+	ros::NodeHandle dynamixelHandler;
+
+	//read parameters
+	std::string tty = ros::param::param<std::string>("/" + ros::this_node::getName() + "/port_name", PORTNAME);
+	int iBaud = ros::param::param<int>("/" + ros::this_node::getName() + "/baud_rate", BAUDRATE);
+
+
+	ROS_DEBUG("Will try to open RS485 Initialised on %s with %i bauds!", tty.c_str(), iBaud);
 
 	//initialise port
 	for (int iTry = 1; iTry <= NBR_OF_TRY; iTry++) {
 		//try initialisation
-		bool bInitialised = InitPort(PORTNAME, BAUDRATE);
+		bool bInitialised = InitPort(tty.c_str(), iBaud);
 
 		if (!bInitialised && iTry == NBR_OF_TRY) {
 			ROS_ERROR("Error initialising RS485 port (Try %i/%i). Process will finish.\n", NBR_OF_TRY, NBR_OF_TRY);
@@ -29,12 +37,10 @@ int main(int argc, char **argv){
 			          NBR_OF_TRY);
 			sleep(5);
 		} else {
-			ROS_INFO("RS485 Initialised!");
+			ROS_INFO("RS485 Initialised on %s with %i bauds!", tty.c_str(), iBaud);
 			break;
 		}
 	}
-
-	ros::NodeHandle dynamixelHandler;
 
 	//initialise ros subscriber for commands
 	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, WriteVelocity);
