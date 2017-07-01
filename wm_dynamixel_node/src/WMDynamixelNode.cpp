@@ -5,6 +5,7 @@
 #include "WMDynamixelNode.h"
 #include "WMDynamixel.h"
 
+
 dynamixel::PortHandler *portHandler;
 dynamixel::PacketHandler *packetHandler;
 
@@ -33,7 +34,6 @@ int main(int argc, char **argv){
 		return 0;
 	}else{
 		ROS_INFO("RS485 Initialised!");
-		
 		//run loop
 		nodeLoop();
 	}
@@ -48,15 +48,11 @@ void nodeLoop() {
 	while(ros::ok()){
 		//ROS_INFO("Looping");
 		ros::spinOnce();
-        ReadFeedback();
+        for (int index = 0; index < dynamixelArray.size(); index++) {
+            dynamixelArray[index].publishPosition(dynamixelPublisher);
+        }
 		iCount ++;
 		loop_rate.sleep();
-	}
-}
-
-void ReadFeedback() {
-	for (int index=0; index < dynamixelArray.size(); index++) {
-		dynamixelArray[index].publishPosition(dynamixelPublisher);
 	}
 }
 
