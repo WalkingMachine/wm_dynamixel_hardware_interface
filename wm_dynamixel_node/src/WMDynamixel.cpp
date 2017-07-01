@@ -140,7 +140,10 @@ bool WMDynamixel::watchdogMgr() {
 	if (sysTime - WATCHDOG > _watchdog) {
 		ROS_WARN("watchdog on dynamixel %i!", _ID);
 		//set dynamixel speed to 0;
-		while (!setVelocity(0)) {
+		for (int iTry = 0; iTry < 10; iTry++) {
+			if (setVelocity(0)) {
+				break;
+			}
 			usleep(1000);
 		}
 		return true;
