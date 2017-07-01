@@ -9,8 +9,8 @@
 #include <ctime>
 
 #define PI 3.1415926535897932
-#define DELAY 10000
-#define WATCHDOG 500000
+#define DELAY 50000		//us
+#define WATCHDOG 500	//ms
 
 class WMDynamixel {
 public:
@@ -36,7 +36,7 @@ private:
     double _coefficient;
 
     //last write time
-    long double _watchdog;
+	unsigned long  _watchdog;
 
 	void initDynamixel();
 };

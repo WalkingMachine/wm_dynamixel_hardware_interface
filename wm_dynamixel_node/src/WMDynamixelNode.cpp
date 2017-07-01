@@ -19,10 +19,10 @@ int main(int argc, char **argv){
 	ros::NodeHandle dynamixelHandler;
 	
 	//initialise ros subscriber
-	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, &WriteAcceleration);
+	ros::Subscriber dynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_cmd", 10, WriteVelocity);
 	
 	//initialise ros subscriber
-	ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10, &addDynamixel);
+	ros::Subscriber newDynamixelSubscriber = dynamixelHandler.subscribe("dynamixel_init", 10, addDynamixel);
 	
 	//initialise ros publisher for data feedback
 	dynamixelPublisher = dynamixelHandler.advertise<std_msgs::Float64MultiArray>("dynamixel_pos", 10);
@@ -42,11 +42,11 @@ int main(int argc, char **argv){
 }
 
 void nodeLoop() {
-	ros::Rate loop_rate(10);
+	ros::Rate loop_rate(50);
 	int iCount = 0;
 	ROS_INFO("Going in node loop.");
 	while(ros::ok()){
-		ROS_INFO("Looping");
+		//ROS_INFO("Looping");
 		ros::spinOnce();
         ReadFeedback();
 		iCount ++;
@@ -60,11 +60,11 @@ void ReadFeedback() {
 	}
 }
 
-void WriteAcceleration(std_msgs::Float64MultiArrayConstPtr msg) {
+void WriteVelocity(std_msgs::Float64MultiArrayConstPtr msg) {
 	int ID = (int)msg->data[0];
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
-			ROS_INFO("received command for dynamixel %i",ID);
+			//ROS_INFO("received command for dynamixel %i",ID);
 			dynamixelArray[index].setVelocity(msg->data[1]);
 			break;
 		}
@@ -80,13 +80,13 @@ void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg) {
 	
 	for (int index=0; index < dynamixelArray.size(); index++) {
 		if(dynamixelArray[index].getID() == ID){
-			ROS_INFO("Will update a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
+			//ROS_INFO("Will update a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
 			dynamixelArray[index].updateDynamixel(ID, offset, resolution);
 			break;
 		}
 	}
 	
-	ROS_INFO("Will add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
+	//ROS_INFO("Will add a dynamixel with ID %i, offset %f and coef %i.",ID,offset,resolution);
 	dynamixelArray.push_back(WMDynamixel(ID, offset, resolution));
 }
 
@@ -133,7 +133,6 @@ bool write1BDynamixel(int ID, int iAddress, int iValue){
 bool write2BDynamixel(int ID, int iAddress, int iValue){
 	int dxl_comm_result;
 	uint8_t dxl_error = 0;
-	
 	dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, ID, iAddress, iValue, &dxl_error);
 	if (dxl_comm_result != COMM_SUCCESS)
 	{

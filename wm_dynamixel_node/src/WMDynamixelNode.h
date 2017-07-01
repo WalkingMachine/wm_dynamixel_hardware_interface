@@ -18,7 +18,7 @@
 
 void nodeLoop();
 bool InitPort(const char *PortName, int BaudRate);
-void WriteAcceleration(std_msgs::Float64MultiArrayConstPtr msg);
+void WriteVelocity(std_msgs::Float64MultiArrayConstPtr msg);
 void addDynamixel(std_msgs::Float64MultiArrayConstPtr msg);
 void ReadFeedback();
 	
