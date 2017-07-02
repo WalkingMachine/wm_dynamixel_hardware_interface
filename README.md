@@ -1,8 +1,8 @@
 # Interface matérielle avec les servomoteurs Dynamixel.
 
-Interface entre les servomoteurs Dynamixel et Ros Control. Implémente le contrôle en vélocité des dynamixel. 
+Interface entre les servomoteurs Dynamixel et `Ros`, et entre `Ros` et `Roscontrol`. Implémente le contrôle en vélocité des dynamixel. 
 
-Dans un premier temps cette interface matérielle sera adaptée uniquement au dynamixels du poignet de `Sara 2.0`.
+Dans un premier temps cette interface matérielle sera adaptée uniquement aux dynamixels du poignet de `Sara 2.0`.
 
 ## Installation
 
@@ -25,12 +25,12 @@ cd ~/ros_ws
 catkin_make
 ```
 
-- Regler les paramètres de connection avec le dynamixel dans `wm_dynamixel_node/launch/wm_dynamixel_node.launch`.
+- Régler les paramètres de connexion avec le dynamixel dans `wm_dynamixel_node/launch/wm_dynamixel_node.launch`.
 
 ```shell
 gedit ~/ros_ws/src/wm_dynamixel_hardware_interface/wm_dynamixel_node/launch/wm_dynamixel_node.launch
 ```
-*Il est possible d'utiliser le [UDEV](https://github.com/WalkingMachine/sara_udev) de sara pour garantir la connexion du contrôleur à la bonne place a chaque démarrage/connexion.*
+*Il est possible d'utiliser le [UDEV](https://github.com/WalkingMachine/sara_udev) de `Sara` pour garantir la connexion du contrôleur à la bonne place à chaque démarrage/connexion du connecteur USB.*
 
 ## Utilisation
 
@@ -42,13 +42,13 @@ gedit ~/ros_ws/src/wm_dynamixel_hardware_interface/wm_dynamixel_node/launch/wm_d
 rosrun wm_dynamixel_node wm_dynamixel_node
 ```
 
-ou pour remplacer les valeurs d'initialisation par défaut:
+ou, pour remplacer les valeurs d'initialisation par défaut:
 
 ```shell
 roslaunch wm_dynamixel_node wm_dynamixel_node.launch
 ```
 
-- Initialiser les dynamixels a utiliser en publiant sur le topic `dynamixel_init`.
+- Initialiser les dynamixels à utiliser en publiant sur le topic `dynamixel_init`.
 
 - Envoyer des commandes de vélocité sur le topic `dynamixel_cmd`.
 
@@ -57,7 +57,7 @@ roslaunch wm_dynamixel_node wm_dynamixel_node.launch
 
 ## Topics 
 
-Tout les topics utilise le message ros standard [`Float64MultiArray`](http://docs.ros.org/api/std_msgs/html/msg/Float64MultiArray.html).
+Tout les topics utilisent le message ros standard [`Float64MultiArray`](http://docs.ros.org/api/std_msgs/html/msg/Float64MultiArray.html).
 
 |    Nom du Topic    |         `dynamixel_init`         |                     `dynamixel_cmd`                     |                         `dynamixel_pos`                         |
 |:------------------:|:--------------------------------:|:-------------------------------------------------------:|:---------------------------------------------------------------:|
