@@ -87,22 +87,22 @@ bool WMDynamixel::publishPosition(ros::Publisher pub) {
 			return false;
 		}
 		usleep(DELAY);
-		int iSpeed = read2BDynamixel(_ID, ADDR_P1_PRESENT_SPEED_2BYTES, &dxl_error);
-		if (dxl_error) {
-			ROS_ERROR("Error reading speed");
-			return false;
-		}
-		usleep(DELAY);
-		if (iSpeed >= 1024) {
-			iSpeed = -iSpeed + 1024;
-		}
-		msg.data.push_back((double) iSpeed / 325.631013566);
-		msg.data.push_back(read2BDynamixel(_ID, ADDR_P1_PRESENT_LOAD_2BYTES, &dxl_error));
-		if (dxl_error) {
-			ROS_ERROR("Error reading load");
-			return false;
-		}
-		usleep(DELAY);
+//		int iSpeed = read2BDynamixel(_ID, ADDR_P1_PRESENT_SPEED_2BYTES, &dxl_error);
+//		if (dxl_error) {
+//			ROS_ERROR("Error reading speed");
+//			return false;
+//		}
+//		usleep(DELAY);
+//		if (iSpeed >= 1024) {
+//			iSpeed = -iSpeed + 1024;
+//		}
+//		msg.data.push_back((double) iSpeed / 325.631013566);
+//		msg.data.push_back(read2BDynamixel(_ID, ADDR_P1_PRESENT_LOAD_2BYTES, &dxl_error));
+//		if (dxl_error) {
+//			ROS_ERROR("Error reading load");
+//			return false;
+//		}
+//		usleep(DELAY);
 
 		msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
 		msg.layout.dim[0].size = (uint) msg.data.size();
