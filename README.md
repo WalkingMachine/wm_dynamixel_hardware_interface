@@ -1,27 +1,74 @@
 # Interface matérielle avec les servomoteurs Dynamixel.
 
-Interface entre les servomoteurs Dynamixel et Ros Control.
+Interface entre les servomoteurs Dynamixel et Ros Control. Implémente le contrôle en vélocité des dynamixel. 
+
+Dans un premier temps cette interface matérielle sera adaptée uniquement au dynamixels du poignet de `Sara 2.0`.
 
 ## Installation
 
-TODO
+- Installer `git` :
 
-## Usage
+```shell
+sudo apt install git
+```
 
-TODO: Write usage instructions
+- Cloner ce repo dans le workspace ros `ros_ws/src/`  :
 
-## Contributing
+```shell
+cd ~/ros_ws/src
+git clone https://github.com/WalkingMachine/wm_dynamixel_hardware_interface.git
+```
+- Compiler le workspace :
+
+```shell
+cd ~/ros_ws
+catkin_make
+```
+
+- Regler les paramètres de connection avec le dynamixel dans `wm_dynamixel_node/launch/wm_dynamixel_node.launch`.
+
+```shell
+gedit ~/ros_ws/src/wm_dynamixel_hardware_interface/wm_dynamixel_node/launch/wm_dynamixel_node.launch
+```
+
+## Utilisation
+
+**Voir section suivante pour plus de details sur les topics**
+
+- Partir le node `wm_dynamixel_node`.
+
+```shell
+rosrun wm_dynamixel_node wm_dynamixel_node
+```
+
+ou pour remplacer les valeurs d'initialisation par défaut:
+
+```shell
+roslaunch wm_dynamixel_node wm_dynamixel_node.launch
+```
+
+- Initialiser les dynamixels a utiliser en publiant sur le topic `dynamixel_init`.
+
+- Envoyer des commandes de vélocité sur le topic `dynamixel_cmd`.
+
+- Lire la position des dynamixels sur le topic `dynamixel_pos`.
 
 
+## Topics 
 
-## History
+Tout les topics utilise le message ros standard [`Float64MultiArray`](http://docs.ros.org/api/std_msgs/html/msg/Float64MultiArray.html).
 
-TODO: Write history
+|    Nom du Topic    |         `dynamixel_init`         |                     `dynamixel_cmd`                     |                         `dynamixel_pos`                         |
+|:------------------:|:--------------------------------:|:-------------------------------------------------------:|:---------------------------------------------------------------:|
+| Index de la donnée | Sers à initialiser un dynamixel. | Sers à commander la vélocité d'un dynamixel initialisé. | Sers à lire le feedback en position des dynamixels initialisés. |
+|          0         |          ID du dynamixel         |                     ID du dynamixel                     |                         ID du dynamixel                         |
+|          1         |        Offset du dynamixel       |                Nouvelle vitesse *[rad/s]*               |                       Angle actuel *[rad]*                      |
+|          2         |      Resolution du dynamixel     |                           */*                           |                               */*                               |
 
 ## Credits
 
-TODO: Write credits
+- [Dynamixel SDK](https://github.com/ROBOTIS-GIT/DynamixelSDK)
 
 ## License
 
-TODO: Write license
+MIT
