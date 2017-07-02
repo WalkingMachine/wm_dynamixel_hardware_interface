@@ -30,6 +30,7 @@ catkin_make
 ```shell
 gedit ~/ros_ws/src/wm_dynamixel_hardware_interface/wm_dynamixel_node/launch/wm_dynamixel_node.launch
 ```
+*Il est possible d'utiliser le [UDEV](https://github.com/WalkingMachine/sara_udev) de sara pour garantir la connexion du contrôleur à la bonne place a chaque démarrage/connexion.*
 
 ## Utilisation
 
