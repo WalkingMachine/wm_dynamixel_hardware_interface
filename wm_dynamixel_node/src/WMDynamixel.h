@@ -9,7 +9,7 @@
 #include <ctime>
 
 #define PI 3.1415926535897932
-#define DELAY 50000		//us
+#define DELAY 100000		//us
 #define WATCHDOG 500	//ms
 
 class WMDynamixel {
